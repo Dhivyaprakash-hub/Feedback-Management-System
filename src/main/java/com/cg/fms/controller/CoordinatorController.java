@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.cg.fms.entities.Feedback;
 import com.cg.fms.entities.Program;
@@ -16,25 +19,28 @@ import com.cg.fms.entities.Trainer;
 import com.cg.fms.service.IFeedbackService;
 import com.cg.fms.service.ITrainingProgramService;
 
-@RestController("/coo")
+@RestController
+@RequestMapping("/coo")
 public class CoordinatorController {
-	IFeedbackService fs;
-	ITrainingProgramService tps;
+	@Autowired
+	private IFeedbackService fs;
+	@Autowired
+	private ITrainingProgramService tps;
 	
 	@PutMapping("/cupdateFeedback")
-	String updatefeedback(@RequestParam Feedback f)
+	public String updatefeedback(@RequestBody Feedback f)
 	{
 		return fs.updateFeedback(f);
 	}
 
-	@GetMapping("/cviewprogfeed")
-	public List<Feedback> viewprogfeed(@RequestParam Program p)
+	@PostMapping("/cviewprogfeed")
+	public List<Feedback> viewprogfeed(@RequestBody Program p)
 	{
 		return fs.viewProgramFeedback(p);
 	}
 	
-	@GetMapping("/cviewtrafeed")
-	public List<Feedback> viewtrafees(@RequestParam Trainer t)
+	@PostMapping("/cviewtrafeed")
+	public List<Feedback> viewtrafees(@RequestBody Trainer t)
 	{
 		return fs.viewTrainerFeedback(t.getTid());
 	}
@@ -46,7 +52,7 @@ public class CoordinatorController {
 	}
 	
 	@PostMapping("/ccreateprog")
-	public String createprog(Program p)
+	public String createprog(@RequestBody Program p)
 	{
 		return tps.createProgram(p);
 	}

@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.persistence.Id;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,9 +31,9 @@ import com.cg.fms.service.IFeedbackService;
 @Service
 public class IFeedbackServiceImplementation implements IFeedbackService {
 
-	@Id
 	@Autowired
 	private IFeedbackRepository fdr;
+	@Autowired
 	ProgramRepository pr;
 	
 	@Override
@@ -74,18 +73,15 @@ public class IFeedbackServiceImplementation implements IFeedbackService {
 	public List<Feedback> viewTrainerFeedback(int trainerid) {
 		
 		List<String> a=pr.findAll().stream().filter(p->p.getFacultyid()==trainerid).map(s->s.getTrainingId()).collect(Collectors.toList());
-		List<Feedback> f=new ArrayList<Feedback>();
-		for(String b:a)
-		{
-			f.add(fdr.getById(b));
-		}
-		return f;
+		return fdr.findAll().stream().filter(feedback -> a.contains(String.valueOf(feedback.getTid())))
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public List<Feedback> viewProgramFeedback(Program program) {
-		Optional<List<Feedback>> f=Optional.of(fdr.findAll().stream().filter(s->s.getTid()==Integer.parseInt(program.getTrainingId())).collect(Collectors.toList()));
-		return f.get();
+		int trainingId = Integer.parseInt(program.getTrainingId());
+		return fdr.findAll().stream().filter(feedback -> feedback.getTid() == trainingId)
+				.collect(Collectors.toList());
 	}
 
 
